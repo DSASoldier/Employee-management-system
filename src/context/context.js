@@ -11,14 +11,7 @@ const UserProvider = ({ children }) => {
     const [totalUsers,setTotalUsers]=useState([]);
     const [usersOnLeave,setUsersonLeave]=useState([]);
     const [users,setUsers] = useState(employees);
-    const [user,setUser] = useState({
-        firstName:'sudeep',
-        lastName:'chatterjee',
-        gender:'male',
-        age:26,
-        email:'sudeepchatterje70@gmail.com',
-        image:img
-    });
+    const [user,setUser] = useState({});
     
     useEffect(()=>{
 
@@ -27,35 +20,74 @@ const UserProvider = ({ children }) => {
     },[]);
 
     async function fetchData(){
-        const res = await axios.get(
-        "https://employee-management-syst-2f45a-default-rtdb.firebaseio.com/employees.json"
-        );
 
-        const data = res.data;
-
-        const employeesArray = Object.keys(data).map(key => ({
-        id2: key,
-        ...data[key]
-        }));
         
-        console.log(employeesArray);
+        try{
 
-        setUsers(employeesArray);
+            const res = await axios.get(
+            "https://employee-management-syst-2f45a-default-rtdb.firebaseio.com/employees.json"
+            );
+    
+            const dataAddedByEmployee = await axios.get(
+                'https://employee-management-syst-2f45a-default-rtdb.firebaseio.com/dataAddbyEmployee.json'
+            );
+
+            const data = res.data || [];
+            const employeedata = dataAddedByEmployee.data || [];
+
+
+            const logInUser = localStorage.getItem('token');
+
+            const adminEmployeesArray = Object.keys(data)?.map(key => {
+
+                const adminData = data[key];
+
+                Object.keys(employeedata)?.map(key => {
+
+                    const fullnameByEmployee = employeedata[key].firstName.toLowerCase().trim() + employeedata[key].lastName.toLowerCase().trim();
+                    const fullnameSplittingByAdmin = [...adminData.name.toLowerCase().trim().split(' ')];
+                    const fullNameByAdmin = fullnameSplittingByAdmin[0]+fullnameSplittingByAdmin[1];
+                    
+                    if(logInUser.toLowerCase().trim() === adminData.email.toLowerCase().trim()){
+                        
+                        if(fullNameByAdmin===fullnameByEmployee){
+                            setUser({...employeedata[key],image:adminData.image});
+                        }
+                    }
+                })
+
+                return ({
+                    id2: key,
+                    ...adminData
+                })
+            });
+            
+
+    
+            setUsers(adminEmployeesArray);
+        }
+        catch(error){
+            console.log(error)
+        }
     }
 
 
     async function addUsers(user){
 
-        await axios.post('https://employee-management-syst-2f45a-default-rtdb.firebaseio.com/employees.json',user) 
+        let employee = {
+            ...user,
 
-        console.log('employee added');
+        }
+
+        await axios.post('https://employee-management-syst-2f45a-default-rtdb.firebaseio.com/employees.json',employee) 
+
 
         setUsers([...users,user]);
     }
 
+
     async function editUsers(updatedEmployee,index){
         
-        console.log(updatedEmployee);
 
         try {
             await axios.patch(
@@ -70,7 +102,6 @@ const UserProvider = ({ children }) => {
 
             setUsers(updatedUsers);
 
-            console.log("Updated successfully");
         } catch (error) {
             console.log(error);
         }
@@ -78,24 +109,22 @@ const UserProvider = ({ children }) => {
     }
 
     async function deleteUserData(id2){
-        // let employeeDataList = users.filter((element,i)=>{
-        //     return i!==index;
-        // })
-
-        // setUsers(employeeDataList);
-
-
         try {
             await axios.delete(
             `https://employee-management-syst-2f45a-default-rtdb.firebaseio.com/employees/${id2}.json`
             );
 
             fetchData()
-            console.log("Employee deleted");
 
         } catch (error) {
             console.log(error);
         }
+    }
+
+    async function dataAddbyEmployee(data){
+
+        await axios.post('https://employee-management-syst-2f45a-default-rtdb.firebaseio.com/dataAddbyEmployee.json',data);
+
     }
 
     const value = {
@@ -108,6 +137,7 @@ const UserProvider = ({ children }) => {
         addUsers:addUsers,
         editUsers:editUsers,
         deleteUserData:deleteUserData,
+        dataAddbyEmployee:dataAddbyEmployee,
     }
     
     return <UserContext.Provider value={value}>

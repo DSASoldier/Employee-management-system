@@ -2,8 +2,6 @@ import { useState,useRef } from "react"
 import { useContext } from "react";
 import { UserContext } from "../context/context";
 import TextField from '@mui/material/TextField';
-import { storage } from "../firebase";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 export default function Profile() {
 
@@ -11,29 +9,33 @@ export default function Profile() {
     const img = data.user.image
     const fileInputRef = useRef(null);
     const [preview, setPreview] = useState(img);
-
-    
     const user = data.user;
-    
+    const dataAddbyEmployee = data.dataAddbyEmployee;
     const users = data.users;
-
+    const [firstName,setFirstname] = useState('');
+    const [lastname,setLastname] = useState('');
+    const [gender,setGender] = useState('');
+    const [age,setAge] = useState('');
     const editUser = data.editUsers;
 
     const handleIconClick = () => {
-        fileInputRef.current.click(); // open file selector
-        
+        fileInputRef.current.click();
     };
 
     const handleFileChange = (e) => {
+
         const file = e.target.files[0];
 
         const reader = new FileReader();
 
-         reader.onloadend = () => {
+        reader.onloadend = () => {
             const base64 = reader.result;
 
-            users.forEach((employee)=>{
-                if(employee.email.toLowerCase().trim()===user.email.toLowerCase().trim()){
+            users.forEach((data)=>{
+
+                const employee = data;
+
+                if(employee?.email?.toLowerCase()?.trim()===user?.email?.toLowerCase()?.trim()){
 
                     employee.image = base64;
                     editUser(employee,0);
@@ -41,22 +43,34 @@ export default function Profile() {
             })
         };
 
-  reader.readAsDataURL(file);
+        reader.readAsDataURL(file);
 
         if (file) {
             const imageUrl = URL.createObjectURL(file);
             setPreview(imageUrl);
         }
-
     };
 
-    console.log(user);
+    function addEmployeeDataHandler(){
+
+        if(firstName && lastname && age && gender && preview){
+
+            console.log(firstName,lastname,age,gender,preview);
+
+            dataAddbyEmployee({
+                firstName:firstName,
+                lastName:lastname,
+                age:age,
+                gender:gender,
+            })
+        }
+    }
+
 
     return <div className="profileContainer">
 
         <div style={{ display:'flex',textAlign: "center",width:'50%',justifyContent:'center',alignItems:'center',height:'50vh'}}>
 
-            {/* Clickable Avatar */}
             <div
                 onClick={handleIconClick}
                 style={{
@@ -82,8 +96,8 @@ export default function Profile() {
                         viewBox="0 0 24 24"
                     >
                         <path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 
-            2.3-5 5 2.3 5 5 5zm0 2c-4.4 0-8 
-            2.2-8 5v3h16v-3c0-2.8-3.6-5-8-5z"/>
+                            2.3-5 5 2.3 5 5 5zm0 2c-4.4 0-8 
+                            2.2-8 5v3h16v-3c0-2.8-3.6-5-8-5z"/>
                     </svg>
                 )}
             </div>
@@ -104,60 +118,35 @@ export default function Profile() {
                     required
                     id="outlined-required"
                     label="First Name"
-                    defaultValue={user.firstName}
+                    defaultValue={user?.firstName || firstName}
+                    onChange={(e)=>setFirstname(e.target.value)}
                 />
 
                 <TextField
                     required
                     id="outlined-required"
                     label="Last Name"
-                    defaultValue={user.lastName}
+                    defaultValue={user?.lastName || lastname}
+                    onChange={(e)=>setLastname(e.target.value)}
                 />
               
                 <TextField
                     required
                     id="outlined-required"
                     label="Gender"
-                    defaultValue={user.gender}
+                    defaultValue={user?.gender || gender}
+                    onChange={(e)=>setGender(e.target.value)}
                 />
                 
-
                 <TextField
                     required
                     id="outlined-required"
                     label="Age"
-                    defaultValue={user.age}
+                    defaultValue={user?.age || age}
+                    onChange={(e)=>setAge(e.target.value)}
                 />
-
-                <TextField
-                    required
-                    id="outlined-required"
-                    label="Age"
-                    defaultValue={user.age}
-                />
-
-                <TextField
-                    required
-                    id="outlined-required"
-                    label="Age"
-                    defaultValue={user.age}
-                />
-
-                <TextField
-                    required
-                    id="outlined-required"
-                    label="Age"
-                    defaultValue={user.age}
-                />
-
-                <TextField
-                    required
-                    id="outlined-required"
-                    label="Age"
-                    defaultValue={user.age}
-                />
-                
             </div>
+            <button onClick={addEmployeeDataHandler} className="add-data-by-employee">Add</button>
         </div>
     </div>
 }

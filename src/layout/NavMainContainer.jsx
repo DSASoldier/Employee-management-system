@@ -8,6 +8,7 @@ import MenuItem from '@mui/material/MenuItem';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../context/context';
 import { useContext } from 'react';
+import SideBar from './SideBar';
 
 export default function NavMainContainer(){
 
@@ -18,65 +19,78 @@ export default function NavMainContainer(){
 
     const userImage = data.user.image;
 
-    console.log(data.user);
     
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
 
+    const clearToken=()=>{
+        localStorage.removeItem('token');
+    }
+
     const handleClose = () => {
         setAnchorEl(null);
     };
     
+    const navigateToLogin = ()=>{
+        clearToken();
+        navigation('/');
+    }
+    
     const navigateToProfile = ()=>{
         navigation('/profile');
     }
-
     return <div className="nav-main-container">
         <nav className="dashboard-nav-bar">
 
-            <div>
-                <span>Employee Management System </span>
-                <input type="text" placeholder="search"/>
+            <div style={{scale:'calc(100%)',display:'flex',alignItems:'center',width:'90%'}}>
+                <p style={{scale:'calc(150%)',marginLeft:'8%'}}>Employee Management System </p>
             </div>
 
-            <div>
-                <FaBell size={23}/>
-            </div>
-
-            <div>
-                <Button
-                    id="basic-button"
-                    aria-controls={open ? 'basic-menu' : undefined}
-                    aria-haspopup="true"
-                    aria-expanded={open ? 'true' : undefined}
-                    onClick={handleClick}
-                >
-                    <img src={userImage} className='profile-image'/>
-                </Button>
-                <Menu
-                    id="basic-menu"
-                    anchorEl={anchorEl}
-                    open={open}
-                    onClose={handleClose}
-                    slotProps={{
-                    list: {
-                        'aria-labelledby': 'basic-button',
-                    },
-                    }}
-                >
-                    <MenuItem onClick={()=>{
-                        handleClose()
-                        navigateToProfile()
-                    }
-                    }>Profile</MenuItem>
-                    <MenuItem onClick={handleClose}>My account</MenuItem>
-                    <MenuItem onClick={handleClose}>Logout</MenuItem>
-                </Menu>
+            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',width:'10%'}}>
+                <div>     
+                    <FaBell size={23}/>
+                </div>
+                <div>
+                    <Button
+                        id="basic-button"
+                        aria-controls={open ? 'basic-menu' : undefined}
+                        aria-haspopup="true"
+                        aria-expanded={open ? 'true' : undefined}
+                        onClick={handleClick}
+                    >
+                        <img src={userImage} className='profile-image'/>
+                    </Button>
+                    <Menu
+                        id="basic-menu"
+                        anchorEl={anchorEl}
+                        open={open}
+                        onClose={handleClose}
+                        slotProps={{
+                        list: {
+                            'aria-labelledby': 'basic-button',
+                        },
+                        }}
+                    >
+                        <MenuItem onClick={()=>{
+                            // handleClose()
+                            navigateToProfile()
+                        }
+                        }>Profile</MenuItem>
+                        <MenuItem onClick={handleClose}>My account</MenuItem>
+                        <MenuItem onClick={()=>{
+                            handleClose()
+                            navigateToLogin()
+                        }}>Logout</MenuItem>
+                    </Menu>
+                </div>
             </div>
         </nav>
-        <main>
-            <Outlet></Outlet>
+        <main className='main-container-dashboard'>
+            <SideBar/>
+            <div style={{width:'80%',padding:'30px'}}>
+                <Outlet></Outlet>
+            </div>
         </main>
     </div>
 }

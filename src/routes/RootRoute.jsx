@@ -7,6 +7,7 @@ import Settings from '../pages/Settings';
 import DashBoardProtect from '../route-protection/DashBoardProtect';
 import LoginProtect from '../route-protection/LoginProtect';
 import Profile from '../pages/Profile';
+
 export default function RootRoute(){
 
     return  <Routes>
@@ -24,7 +25,7 @@ export default function RootRoute(){
                         <Route path='employee' element={<Employee/>}/>
                         <Route path='settings' element={<Settings/>}/>
                     </Route>
-
                     <Route path='/profile' element={<Profile/>}/>
+
             </Routes>
 }
