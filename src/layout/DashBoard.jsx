@@ -1,5 +1,5 @@
 import { UserContext } from "../context/context"
-import { useContext } from "react"
+import { useContext, useEffect } from "react"
 export default function DashBoard(){
 
     let active = 0,inactive = 0,onLeave = 0;
@@ -7,6 +7,10 @@ export default function DashBoard(){
     const context = useContext(UserContext);
 
     const users = context.users;
+    
+    useEffect(()=>{
+        context.fetchData();
+    },[]);
     
     users.forEach((user)=>{
 

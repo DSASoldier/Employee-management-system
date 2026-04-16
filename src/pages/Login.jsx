@@ -14,6 +14,8 @@ export default function Login(){
     const [message,setMessage] = useState(false);
     const users = contextData.users;
     const navigation = useNavigate();
+    const getEmail = contextData.getEmail;
+
 
     function validateEmail(email) {
         const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -56,9 +58,14 @@ export default function Login(){
         
         if(!passwordMessage && !emailMessage){
             users.forEach((user)=>{
-                if(email.toLowerCase().trim()===user.email.toLowerCase().trim()){
+
+                console.log(user);
+                
+                if((email.toLowerCase().trim()===user.email.toLowerCase().trim())){
+
                     localStorage.setItem("token",email.toLowerCase().trim());
                     count++;
+                    getEmail();
                     navigation('/login-dashboard');
                 }
             })

@@ -17,7 +17,7 @@ export default function Settings(){
 
     const [status1,setStatus1] = React.useState('active');
 
-    const employees = context.users;
+    const employees = context.users || [];
 
     const handleClickOpen = (index) => {
 
@@ -44,24 +44,29 @@ export default function Settings(){
     };
 
     return <div>
-        <AddEmployeeModal handleClickOpen={handleClickOpen} handleClose={handleClose} open={open} handleSubmit={handleSubmit} name={employees[index].name} id={employees[index].id} role={employees[index].role} email={employees[index].email} status={employees[index].status} date={employees[index].joiningDate || employees[index].date} status1={status1} setStatus1={setStatus1}/>
+        <AddEmployeeModal handleClickOpen={handleClickOpen} handleClose={handleClose} open={open} handleSubmit={handleSubmit} name={employees[index]?.name} id={employees[index]?.id} role={employees[index]?.role} email={employees[index]?.email} status={employees[index]?.status} date={employees[index]?.joiningDate || employees[index]?.date} status1={status1} setStatus1={setStatus1}/>
 
-        {employees.map((employee,index)=>{
-            return <div>
-                <div className="single-employee-data">
-                    <p>{employee?.name}</p>
-                    <p>{employee?.id}</p>
-                    <p>{employee?.role}</p>
-                    <p>{employee?.email}</p>
-                    <p>{employee?.status}</p>
-                    <p>{employee?.joiningDate || employee.date}</p>
+        <div className="setting-root">
+
+            {employees.map((employee,index)=>{
+                return <div>
+                    <div className="single-employee-data">
+                        <p style={{color:'white',width:'15%',textAlign:'center'}}>{employee?.name || ''}</p>
+                        <p style={{color:'white',width:'15%',textAlign:'center'}}>{employee?.id || ''}</p>
+                        <p style={{color:'white',width:'15%',textAlign:'center'}}>{employee?.role || ''}</p>
+                        <p style={{color:'white',width:'15%',textAlign:'center'}}>{employee?.email || ''}</p>
+                        <p style={{color:'white',width:'15%',textAlign:'center'}}>{employee?.status || ''}</p>
+                        <p style={{color:'white',width:'15%',textAlign:'center'}}>{employee?.joiningDate || employee?.date}</p>
+                    </div>
+                    <div className="edit-delete-button-container">
+                        <button onClick={()=>handleClickOpen(index)} >Edit</button>
+                        <button onClick={()=>deleteUserData(employee.id2)}>Delete</button>
+                    </div>
                 </div>
-                <div className="edit-delete-button-container">
-                    <button onClick={()=>handleClickOpen(index)} >Edit</button>
-                    <button onClick={()=>deleteUserData(employee.id2)}>Delete</button>
-                </div>
-            </div>
-        })}
+            })}
+
+        </div>
+            
 
     </div>
 }

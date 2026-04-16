@@ -21,6 +21,7 @@ export default function RootRoute(){
                             <LoginDashboard/>
                         </DashBoardProtect>
                         }>
+                        <Route index element={<DashBoard />} />
                         <Route path='dashboard' element={<DashBoard />}/>
                         <Route path='employee' element={<Employee/>}/>
                         <Route path='settings' element={<Settings/>}/>

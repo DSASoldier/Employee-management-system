@@ -50,9 +50,12 @@
 
 .single-employee-data{
   display: flex;
-  justify-content: space-around;
+  /* justify-content: space-around; */
   border-style: solid;
   border-width: 2px;
+  padding-left: 20px;
+  margin-right: 20px;
+  margin-bottom: 5px;
 }
 
 .employee-add-container{
@@ -120,7 +123,7 @@
 }
 .employees-detail-container{
   overflow-y: scroll;
-  height: 50vh;
+  height: 60vh;
 }
 .add-data-by-employee{
  padding-top: 10px;
@@ -128,4 +131,8 @@
 }
 .add-data-by-employee:hover{
   cursor: pointer;
+}
+.setting-root{
+  overflow-y: scroll;
+  height: 80vh;
 }

@@ -1,22 +1,103 @@
-import { useState,useRef } from "react"
+import { useState,useRef, useEffect } from "react"
 import { useContext } from "react";
 import { UserContext } from "../context/context";
 import TextField from '@mui/material/TextField';
+import axios from "axios";
 
 export default function Profile() {
 
     const data = useContext(UserContext);
-    const img = data.user.image
     const fileInputRef = useRef(null);
-    const [preview, setPreview] = useState(img);
-    const user = data.user;
-    const dataAddbyEmployee = data.dataAddbyEmployee;
+    const [preview, setPreview] = useState(null);
     const users = data.users;
+    const email = data.email
     const [firstName,setFirstname] = useState('');
     const [lastname,setLastname] = useState('');
     const [gender,setGender] = useState('');
     const [age,setAge] = useState('');
+    const [base64store,setBase64Store] = useState();
     const editUser = data.editUsers;
+
+    useEffect(()=>{
+        fetchData();
+    },[email])
+
+    async function fetchData(){
+        
+        try{
+
+            const apiData = await axios.get('https://employee-management-syst-2f45a-default-rtdb.firebaseio.com/dataAddbyEmployee.json');
+
+            const employeeData = apiData.data;
+
+            console.log(employeeData)
+            Object.keys(employeeData).forEach((key)=>{
+                console.log(email?.toLowerCase()?.trim());
+                if(employeeData[key].email?.toLowerCase().trim() === email?.toLowerCase()?.trim()){
+                    
+                    setFirstname(employeeData[key]?.firstName);
+                    setLastname(employeeData[key]?.lastName);
+                    setAge(employeeData[key]?.age);
+                    setGender(employeeData[key]?.gender);
+                    setPreview(employeeData[key]?.image);
+                }
+            })
+
+        }
+        catch(error){
+            console.log(error)
+        }
+
+    }
+
+    async function updateEmployeeData(data,id){
+
+        try{
+
+            await axios.patch(`https://employee-management-syst-2f45a-default-rtdb.firebaseio.com/dataAddbyEmployee/${id}.json`,data);
+        }
+        catch(error){
+            console.log(error);
+        }
+    }
+
+    async function addNewEmployee(data){
+
+        try{
+            await axios.post(`https://employee-management-syst-2f45a-default-rtdb.firebaseio.com/dataAddbyEmployee.json`,data);            
+        }
+        catch(error){
+            console.log(error);
+        }
+
+    }
+
+    async function dataAddbyEmployee(data){
+
+        try{
+
+            const apiData = await axios.get('https://employee-management-syst-2f45a-default-rtdb.firebaseio.com/dataAddbyEmployee.json');
+
+            let count = 0;
+            const employeeData = apiData.data;
+            
+            Object.keys(employeeData || {}).forEach((key)=>{
+                if(employeeData[key]?.email?.toLowerCase().trim() === email?.toLowerCase()?.trim()){
+                    updateEmployeeData(data,key);
+                    count++;
+                }
+            })
+
+            if(count===0){
+                addNewEmployee(data);
+            }
+
+        }
+        catch(error){
+            console.log(error)
+        }
+
+    }
 
     const handleIconClick = () => {
         fileInputRef.current.click();
@@ -31,16 +112,18 @@ export default function Profile() {
         reader.onloadend = () => {
             const base64 = reader.result;
 
-            users.forEach((data)=>{
+           users.forEach((data)=>{
 
-                const employee = data;
+            const employee = data;
+            
+            if(employee?.email?.toLowerCase()?.trim()===email?.toLowerCase()?.trim()){
 
-                if(employee?.email?.toLowerCase()?.trim()===user?.email?.toLowerCase()?.trim()){
-
-                    employee.image = base64;
-                    editUser(employee,0);
-                }
-            })
+                employee.image = base64;
+                editUser(employee,0);
+                setBase64Store(base64)
+                
+            }
+        })
         };
 
         reader.readAsDataURL(file);
@@ -62,10 +145,11 @@ export default function Profile() {
                 lastName:lastname,
                 age:age,
                 gender:gender,
+                email:email,
+                image:base64store
             })
         }
     }
-
 
     return <div className="profileContainer">
 
@@ -118,7 +202,7 @@ export default function Profile() {
                     required
                     id="outlined-required"
                     label="First Name"
-                    defaultValue={user?.firstName || firstName}
+                    value={firstName}
                     onChange={(e)=>setFirstname(e.target.value)}
                 />
 
@@ -126,7 +210,7 @@ export default function Profile() {
                     required
                     id="outlined-required"
                     label="Last Name"
-                    defaultValue={user?.lastName || lastname}
+                    value={lastname}
                     onChange={(e)=>setLastname(e.target.value)}
                 />
               
@@ -134,7 +218,7 @@ export default function Profile() {
                     required
                     id="outlined-required"
                     label="Gender"
-                    defaultValue={user?.gender || gender}
+                    value={gender}
                     onChange={(e)=>setGender(e.target.value)}
                 />
                 
@@ -142,9 +226,10 @@ export default function Profile() {
                     required
                     id="outlined-required"
                     label="Age"
-                    defaultValue={user?.age || age}
+                    value={age}
                     onChange={(e)=>setAge(e.target.value)}
                 />
+
             </div>
             <button onClick={addEmployeeDataHandler} className="add-data-by-employee">Add</button>
         </div>

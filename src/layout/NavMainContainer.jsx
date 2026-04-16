@@ -16,10 +16,8 @@ export default function NavMainContainer(){
     const open = anchorEl;
     const navigation = useNavigate();
     const data = useContext(UserContext);
+    const userImage = data.image
 
-    const userImage = data.user.image;
-
-    
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
@@ -59,7 +57,45 @@ export default function NavMainContainer(){
                         aria-expanded={open ? 'true' : undefined}
                         onClick={handleClick}
                     >
-                        <img src={userImage} className='profile-image'/>
+                    {userImage ? <div
+                            style={{
+                                width: "35px",
+                                height: "35px",
+                                borderRadius: "50%",
+                                background: "#eee",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                cursor: "pointer",
+                                overflow: "hidden"
+                            }}
+                        ><img src={userImage} className='profile-image'/></div>:
+                        <div
+                            style={{
+                                width: "35px",
+                                height: "35px",
+                                borderRadius: "50%",
+                                background: "#eee",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                cursor: "pointer",
+                                overflow: "hidden"
+                            }}
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="30"
+                                height="30"
+                                fill="#777"
+                                viewBox="0 0 24 24"
+                            >
+                                <path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 
+                                    2.3-5 5 2.3 5 5 5zm0 2c-4.4 0-8 
+                                    2.2-8 5v3h16v-3c0-2.8-3.6-5-8-5z"/>
+                            </svg>
+                        </div> 
+                    }
                     </Button>
                     <Menu
                         id="basic-menu"

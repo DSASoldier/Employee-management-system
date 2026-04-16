@@ -94,13 +94,54 @@ export default function Employee(){
                     {
 
                 return <div className="single-employee-data">
-                    <img src={employeeData.image} className='profile-image'/>
-                    <p style={{color:'white'}}>{employeeData.name}</p>
-                    <p style={{color:'white'}}>{employeeData.id}</p>
-                    <p style={{color:'white'}}>{employeeData.role}</p>
-                    <p style={{color:'white'}}>{employeeData.email}</p>
-                    <p style={{color:'white'}}>{employeeData.status}</p>
-                    <p style={{color:'white'}}>{employeeData.joiningDate || employeeData.date}</p>
+                        <div style={{width:'5%'}}>
+                            {employeeData.image ? <div
+                                    style={{
+                                        width: "35px",
+                                        height: "35px",
+                                        borderRadius: "50%",
+                                        background: "#eee",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        cursor: "pointer",
+                                        overflow: "hidden",
+                                        marginTop:'8px'
+                                    }}
+                                > <img src={employeeData.image} className='profile-image'/> 
+                                </div>: <div style={{
+                                        width: "35px",
+                                        height: "35px",
+                                        borderRadius: "50%",
+                                        background: "#eee",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        cursor: "pointer",
+                                        overflow: "hidden",
+                                        marginTop:'8px'
+                                    }}
+                                >
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="30"
+                                        height="30"
+                                        fill="#777"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 
+                                            2.3-5 5 2.3 5 5 5zm0 2c-4.4 0-8 
+                                            2.2-8 5v3h16v-3c0-2.8-3.6-5-8-5z"/>
+                                    </svg>
+                                </div>}
+                        </div>
+                    
+                    <p style={{color:'white',width:'15%',textAlign:'center'}}>{employeeData.name}</p>
+                    <p style={{color:'white',width:'20%',textAlign:'center'}}>{employeeData.id}</p>
+                    <p style={{color:'white',width:'20%',textAlign:'center'}}>{employeeData.role}</p>
+                    <p style={{color:'white',width:'20%',textAlign:'center'}}>{employeeData.email}</p>
+                    <p style={{color:'white',width:'10%',textAlign:'center'}}>{employeeData.status}</p>
+                    <p style={{color:'white',width:'10%',textAlign:'center'}}>{employeeData.joiningDate || employeeData.date}</p>
                 </div>
                 }
 
