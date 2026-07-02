@@ -1,42 +1,79 @@
-export default function LeaveAproval(){
+import React, { useState } from "react";
 
-    return <div>
+export default function LeaveAproval() {
 
-        <p>name</p>
+    const employee = {
+        name: "Sudeep Chatterjee",
+        fromDate: "2026-07-05",
+        endDate: "2026-07-08",
+        reason: "Medical Leave"
+    };
 
-         <div className="form-group">
+    const [comment, setComment] = useState("");
 
-                    <div className="date-box">
-                        <div>
-                            <input
-                                type="date"
-                                name="fromDate"
-                                value={formData.fromDate}
-                                onChange={handleChange}
-                            />
+    const handleApprove = () => {
+        console.log({
+            status: "Approved",
+        });
+    };
 
-                            <span className="error">
-                                {errors.fromDate}
-                            </span>
-                        </div>
+    const handleReject = () => {
+        console.log({
+            status: "Rejected",
+        });
+    };
 
+    return (<div className="leave-approval-container">
 
-                        <div>
-                            <input
-                                type="date"
-                                name="endDate"
-                                value={formData.endDate}
-                                onChange={handleChange}
-                            />
+        <div className="leave-approval-card">
 
-                            <span className="error">
-                                {errors.endDate}
-                            </span>
-                        </div>
+            <h2 className="leave-employee-name">{employee.name}</h2>
 
-                    </div>
+            <div className="leave-info">
+                <p><strong>From:</strong> {employee.fromDate}</p>
+                <p><strong>To:</strong> {employee.endDate}</p>
+                <p><strong>Leave Type:</strong> Sick Leave</p>
+            </div>
 
-                </div>
+            <div className="leave-section">
+                <h3>Reason</h3>
+
+                <textarea
+                    className="leave-readonly-textarea"
+                    value={employee.reason}
+                    readOnly
+                />
+            </div>
+
+            <div className="leave-section">
+                <h3>HR Comment</h3>
+
+                <textarea
+                    className="leave-comment-textarea"
+                    value={comment}
+                    onChange={(e) => setComment(e.target.value)}
+                    placeholder="Write your comment..."
+                />
+            </div>
+
+            <div className="leave-button-group">
+                <button
+                    className="approve-button"
+                    onClick={handleApprove}
+                >
+                    Approve
+                </button>
+
+                <button
+                    className="reject-button"
+                    onClick={handleReject}
+                >
+                    Reject
+                </button>
+            </div>
+
+        </div>
 
     </div>
+);
 }
