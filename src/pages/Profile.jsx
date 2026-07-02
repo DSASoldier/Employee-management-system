@@ -3,7 +3,7 @@ import { useContext } from "react";
 import { UserContext } from "../context/context";
 import TextField from '@mui/material/TextField';
 import axios from "axios";
-
+import EmployeeDetail from "../component/EmployeeDetail";
 export default function Profile() {
 
     const data = useContext(UserContext);
@@ -153,13 +153,13 @@ export default function Profile() {
 
     return <div className="profileContainer">
 
-        <div style={{ display:'flex',textAlign: "center",width:'50%',justifyContent:'center',alignItems:'center',height:'50vh'}}>
+        <div style={{ display:'flex',textAlign: "center",justifyContent:'center',alignItems:'center',height:'50vh'}}>
 
             <div
-                onClick={handleIconClick}
+                // onClick={handleIconClick}
                 style={{
-                    width: "120px",
-                    height: "120px",
+                    width: "180px",
+                    height: "180px",
                     borderRadius: "50%",
                     background: "#eee",
                     display: "flex",
@@ -168,16 +168,18 @@ export default function Profile() {
                     cursor: "pointer",
                     overflow: "hidden"
                 }}
+                
             >
+                
                 {preview ? (
                     <img src={preview} alt="profile" style={{ width: "100%" }} />
                 ) : (
                     <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="60"
-                        height="60"
-                        fill="#777"
-                        viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="60"
+                    height="60"
+                    fill="#777"
+                    viewBox="0 0 24 24"
                     >
                         <path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 
                             2.3-5 5 2.3 5 5 5zm0 2c-4.4 0-8 
@@ -187,51 +189,20 @@ export default function Profile() {
             </div>
 
             {/* Hidden File Input */}
-            <input
+            {/* <input
                 type="file"
                 accept="image/*"
                 ref={fileInputRef}
                 onChange={handleFileChange}
                 style={{ display: "none" }}
-            />
+            /> */}
 
         </div>
-        <div style={{width:'50%',display:'grid',justifyContent:'center',alignItems:'center',height:'100vh'}}>
-            <div style={{display:'grid',gridTemplateColumns: 'repeat(2,1fr)',gap:'20px'}}>
-                <TextField
-                    required
-                    id="outlined-required"
-                    label="First Name"
-                    value={firstName}
-                    onChange={(e)=>setFirstname(e.target.value)}
-                />
-
-                <TextField
-                    required
-                    id="outlined-required"
-                    label="Last Name"
-                    value={lastname}
-                    onChange={(e)=>setLastname(e.target.value)}
-                />
-              
-                <TextField
-                    required
-                    id="outlined-required"
-                    label="Gender"
-                    value={gender}
-                    onChange={(e)=>setGender(e.target.value)}
-                />
-                
-                <TextField
-                    required
-                    id="outlined-required"
-                    label="Age"
-                    value={age}
-                    onChange={(e)=>setAge(e.target.value)}
-                />
-
-            </div>
-            <button onClick={addEmployeeDataHandler} className="add-data-by-employee">Add</button>
+        <div className="employee-profile-details">
+            <EmployeeDetail heading={'Personal Info'} details={['Email','Phone number','Address','Emergency contact']} detailsInfo={[[`${email}`,'none','none','none']]}></EmployeeDetail>
+            <EmployeeDetail heading={'Job Information'} details={['Employee Id','Department','Designation','Emergency contact']} detailsInfo={[`none`,'none','none','none']}></EmployeeDetail>
         </div>
+
+
     </div>
 }

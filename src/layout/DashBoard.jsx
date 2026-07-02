@@ -21,17 +21,21 @@ export default function DashBoard(){
     })
 
     return <div className="dashboard-root">
+
+                <h2 style={{color:'white'}}>Total Users {users.length}</h2>
+
                 <div>
                     <p style={{color:'white'}}>Active Users {active}</p>
+
+                    <p style={{color:'white'}}>On leave {onLeave}</p>
+
+                    <p style={{color:'white'}}>Notice Period {onLeave}</p>
+                
+                    <p style={{color:'white'}}>Resigned {onLeave}</p>
+
+                    <p style={{color:'white'}}>terminated {onLeave}</p>
+                    
                 </div>
-                <div>
-                    <p style={{color:'white'}}>Inactive Users {inactive}</p>
-                </div>
-                <div>
-                    <p style={{color:'white'}}>users on leave {onLeave}</p>
-                </div>
-                <div>
-                    <p style={{color:'white'}}>Total Users {users.length}</p>
-                </div>
+                
             </div>
 }

@@ -11,9 +11,9 @@ const UserProvider = ({ children }) => {
     const [users,setUsers] = useState([]);
     const [user,setUser] = useState({});
     const logInUser = localStorage.getItem('token') || '';
-
     const [email,setEmail] = useState(logInUser);
     const [image,setImage] = useState(null);
+
     useEffect(()=>{
         fetchData(); 
     },[email]);
@@ -122,6 +122,26 @@ const UserProvider = ({ children }) => {
         }
     }
 
+    async function adminGetData(){
+        try {
+            await axios.get(
+                `https://employee-management-syst-2f45a-default-rtdb.firebaseio.com/admin.json`
+            );
+
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    async function addAdminName(name){
+        try {
+            await axios.post(
+                `https://employee-management-syst-2f45a-default-rtdb.firebaseio.com/admin.json`,name
+            );
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
     const value = {
         users:users,
@@ -136,7 +156,9 @@ const UserProvider = ({ children }) => {
         addUsers:addUsers,
         editUsers:editUsers,
         deleteUserData:deleteUserData,
-        getEmail:getEmail
+        getEmail:getEmail,
+        adminGetData:adminGetData,
+        addAdminName:addAdminName
     }
     
     return <UserContext.Provider value={value}>
