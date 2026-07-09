@@ -38,6 +38,7 @@ export default function NavMainContainer(){
     const navigateToProfile = ()=>{
         navigation('/profile');
     }
+    
     return <div className="nav-main-container">
         <nav className="dashboard-nav-bar">
 
@@ -46,7 +47,7 @@ export default function NavMainContainer(){
             </div>
 
             <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',width:'10%'}}>
-                <div>     
+                <div className='notification-icon' style={{cursor:'pointer'}} onClick={()=>navigation('/login-dashboard/notifications')}>     
                     <FaBell size={23}/>
                 </div>
                 <div>

@@ -4,19 +4,24 @@ import { UserContext } from "../context/context";
 import TextField from '@mui/material/TextField';
 import axios from "axios";
 import EmployeeDetail from "../component/EmployeeDetail";
+import { url } from "../url/url";
+
 export default function Profile() {
 
     const data = useContext(UserContext);
     const fileInputRef = useRef(null);
     const [preview, setPreview] = useState(null);
     const users = data.users;
-    const email = data.email
-    const [firstName,setFirstname] = useState('');
-    const [lastname,setLastname] = useState('');
-    const [gender,setGender] = useState('');
-    const [age,setAge] = useState('');
+    const email = data.email;
+    const [phoneNumber,setphoneNumber] = useState('');
+    const [address,setaddress] = useState('');
+    const [emergencyNumber,setEmergencyNumber] = useState('');
     const [base64store,setBase64Store] = useState();
     const editUser = data.editUsers;
+    const [editButtonClicked,setEditButtonClicked] = useState(false);
+    const [employeeID,setEmployeeID] = useState('');
+    const [department,setDepartment] = useState('');
+    const [designation,setDesignation] = useState('');
 
     useEffect(()=>{
         fetchData();
@@ -27,19 +32,30 @@ export default function Profile() {
         try{
 
             const apiData = await axios.get('https://employee-management-syst-2f45a-default-rtdb.firebaseio.com/dataAddbyEmployee.json');
-
+            const employeeDatabaseData = await axios.get(`${url}/employees.json`);
+            const employeeDetails = employeeDatabaseData.data;
             const employeeData = apiData.data;
 
-            console.log(employeeData)
+            console.log(employeeDetails);
+
             Object.keys(employeeData).forEach((key)=>{
-                console.log(email?.toLowerCase()?.trim());
                 if(employeeData[key].email?.toLowerCase().trim() === email?.toLowerCase()?.trim()){
-                    
-                    setFirstname(employeeData[key]?.firstName);
-                    setLastname(employeeData[key]?.lastName);
-                    setAge(employeeData[key]?.age);
-                    setGender(employeeData[key]?.gender);
-                    setPreview(employeeData[key]?.image);
+
+                    setphoneNumber(employeeData[key]?.phonenumber);
+                    setaddress(employeeData[key]?.address);
+                    setEmergencyNumber(employeeData[key]?.emergencycontact);
+                }
+            })
+
+            console.log(employeeDetails);
+            
+            Object.keys(employeeDetails).forEach((key)=>{
+                if(employeeDetails[key].email?.toLowerCase().trim() === email?.toLowerCase()?.trim()){
+
+                    setEmployeeID(employeeDetails[key]?.EmployeeId);
+                    setDepartment(employeeDetails[key]?.Designation);
+                    setDesignation(employeeDetails[key]?.Designation);
+                    setPreview(employeeDetails[key]?.image);
                 }
             })
 
@@ -103,54 +119,14 @@ export default function Profile() {
         fileInputRef.current.click();
     };
 
-    const handleFileChange = (e) => {
-
-        const file = e.target.files[0];
-
-        const reader = new FileReader();
-
-        reader.onloadend = () => {
-            const base64 = reader.result;
-
-           users.forEach((data)=>{
-
-            const employee = data;
-            
-            if(employee?.email?.toLowerCase()?.trim()===email?.toLowerCase()?.trim()){
-
-                employee.image = base64;
-                editUser(employee,0);
-                setBase64Store(base64)
-                
-            }
-        })
-        };
-
-        reader.readAsDataURL(file);
-
-        if (file) {
-            const imageUrl = URL.createObjectURL(file);
-            setPreview(imageUrl);
-        }
-    };
-
-    function addEmployeeDataHandler(){
-
-        if(firstName && lastname && age && gender && preview){
-
-            console.log(firstName,lastname,age,gender,preview);
-
-            dataAddbyEmployee({
-                firstName:firstName,
-                lastName:lastname,
-                age:age,
-                gender:gender,
-                email:email,
-                image:base64store
-            })
-        }
+    function handleEditClick(){
+        setEditButtonClicked(true);
     }
 
+    function handleSaveClick(data){
+            dataAddbyEmployee(data);
+            setEditButtonClicked(false);
+    }
     return <div className="profileContainer">
 
         <div style={{ display:'flex',textAlign: "center",justifyContent:'center',alignItems:'center',height:'50vh'}}>
@@ -199,8 +175,19 @@ export default function Profile() {
 
         </div>
         <div className="employee-profile-details">
-            <EmployeeDetail heading={'Personal Info'} details={['Email','Phone number','Address','Emergency contact']} detailsInfo={[[`${email}`,'none','none','none']]}></EmployeeDetail>
-            <EmployeeDetail heading={'Job Information'} details={['Employee Id','Department','Designation','Emergency contact']} detailsInfo={[`none`,'none','none','none']}></EmployeeDetail>
+            <EmployeeDetail 
+                handleSaveClick={handleSaveClick} 
+                edited={editButtonClicked} 
+                heading={'Personal Info'} 
+                details={['Email','Phone number','Address','Emergency contact']} 
+                detailsInfo={[`${email}`,`${phoneNumber}`,`${address}`,`${emergencyNumber}`]} 
+                handleEditClick={handleEditClick} 
+            />
+            <EmployeeDetail 
+                heading={'Job Information'} 
+                details={['Employee Id','Department','Designation','Emergency contact']} 
+                detailsInfo={[`${employeeID}`,`${department}`,`${designation}`,`${emergencyNumber}`]}
+            />
         </div>
 
 

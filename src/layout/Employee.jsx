@@ -1,4 +1,3 @@
-
 import AddEmployeeModal from "./AddEmployeeModal";
 import * as React from 'react';
 import { useState } from "react";
@@ -23,10 +22,13 @@ export default function Employee(){
 
     const [status1,setStatus1] = React.useState('active');
 
+     const [profileImage, setProfileImage] = React.useState(null);
+     
+    const designation = context.designation;
 
     const itemsPerPage = 10;
 
-    
+    console.log(context.designation);
     const addUsers = context.addUsers;
     const users = context.users;
 
@@ -49,16 +51,27 @@ export default function Employee(){
         const formData = new FormData(event.currentTarget);
         const formJson = Object.fromEntries((formData).entries());
         
-
         formJson.status = status1;
+        formJson.image = profileImage;
 
+        console.log(formJson);
         addUsers(formJson);
 
         handleClose();
     };
     
+    function uploadProfileImage(file) {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      console.log(reader.result);
+      setProfileImage(reader.result);
+    }
+
+    reader.readAsDataURL(file);
+  }
+
     return <div>
-        <AddEmployeeModal handleClickOpen={handleClickOpen} handleClose={handleClose} open={open} handleSubmit={handleSubmit} status1={status1} setStatus1={setStatus1}/>
+        <AddEmployeeModal handleClickOpen={handleClickOpen} handleClose={handleClose} open={open} uploadProfileImage={uploadProfileImage} handleSubmit={handleSubmit} status1={status1} setStatus1={setStatus1}/>
         <div className="employee-filter-container">
             <input type="text" placeholder="search" onChange={(e)=>setEmployeeSearch(e.target.value)}className="dashboard-search"/>
 
@@ -78,22 +91,22 @@ export default function Employee(){
             </div>
         </div>
 
-       <div className="employee-add-container">
+       {designation.toLowerCase().trim()==='manager' && <div className="employee-add-container">
             <p className="add-employee-text">Add employees</p>
             <button onClick={handleClickOpen} className="employee-add-button">Add +</button>
-       </div>
+       </div>}
 
         <div className="employees-detail-container">
             {users.slice((page-1)*itemsPerPage,(page-1)*itemsPerPage+itemsPerPage).map((employeeData)=>{
 
                 if(
-                    (employeeData.email.toLowerCase().includes(employeeSearch.toLowerCase().trim()) || employeeData.name.toLowerCase().includes(employeeSearch.toLowerCase().trim()) || employeeSearch==='') && 
-                    (employeeData.role.toLowerCase().trim()===(employeeRole.toLowerCase().trim()) || employeeRole.toLowerCase().trim()==='all') && 
+                    (employeeData.email.toLowerCase().includes(employeeSearch.toLowerCase().trim()) || employeeData.Name.toLowerCase().includes(employeeSearch.toLowerCase().trim()) || employeeSearch==='') && 
+                    (employeeData.Designation.toLowerCase().trim()===(employeeRole.toLowerCase().trim()) || employeeRole.toLowerCase().trim()==='all') && 
                     (employeeData.status.toLowerCase().trim()===(employeeStatus.toLowerCase().trim()) || employeeStatus.toLowerCase().trim()==='all')
                 )
                     {
 
-                return <div className="single-employee-data">
+                return <div className="single-employee-data" key={employeeData.id2}>
                         <div style={{width:'5%'}}>
                             {employeeData.image ? <div
                                     style={{
@@ -136,9 +149,9 @@ export default function Employee(){
                                 </div>}
                         </div>
                     
-                    <p style={{color:'white',width:'15%',textAlign:'center'}}>{employeeData.name}</p>
-                    <p style={{color:'white',width:'20%',textAlign:'center'}}>{employeeData.id}</p>
-                    <p style={{color:'white',width:'20%',textAlign:'center'}}>{employeeData.role}</p>
+                    <p style={{color:'white',width:'15%',textAlign:'center'}}>{employeeData.Name}</p>
+                    <p style={{color:'white',width:'20%',textAlign:'center'}}>{employeeData.EmployeeId}</p>
+                    <p style={{color:'white',width:'20%',textAlign:'center'}}>{employeeData.Designation}</p>
                     <p style={{color:'white',width:'20%',textAlign:'center'}}>{employeeData.email}</p>
                     <p style={{color:'white',width:'10%',textAlign:'center'}}>{employeeData.status}</p>
                     <p style={{color:'white',width:'10%',textAlign:'center'}}>{employeeData.joiningDate || employeeData.date}</p>

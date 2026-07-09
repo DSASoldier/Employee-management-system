@@ -1,6 +1,10 @@
 import { useState } from "react";
+import { useContext } from "react";
+import { UserContext } from "../context/context";
 
 export default function LeaveApply() {
+
+    const { applyLeave } = useContext(UserContext);
 
     const [formData, setFormData] = useState({
         leave: "",
@@ -10,7 +14,10 @@ export default function LeaveApply() {
     });
 
     const [errors, setErrors] = useState({});
+    const userEmail = localStorage.getItem("token");
 
+    console.log("Form Data:", formData);
+    console.log("Errors:", errors);
 
     const handleChange = (e) => {
         setFormData({
@@ -53,6 +60,13 @@ export default function LeaveApply() {
         if(validate()){
             alert("Leave Applied Successfully");
             console.log(formData);
+            applyLeave({...formData,userEmail:userEmail});
+            setFormData({
+                leave: "",
+                fromDate: "",
+                endDate: "",
+                description: ""
+            });
         }
     };
 

@@ -13,6 +13,12 @@ const UserProvider = ({ children }) => {
     const logInUser = localStorage.getItem('token') || '';
     const [email,setEmail] = useState(logInUser);
     const [image,setImage] = useState(null);
+    const [leaveData,setLeaveData] = useState([]);
+    const [designation,setDesignation] = useState('');
+
+    useEffect(()=>{
+        fetchData();
+    },[]);
 
     useEffect(()=>{
         fetchData(); 
@@ -20,10 +26,9 @@ const UserProvider = ({ children }) => {
 
     function getEmail(){
         const logInUser = localStorage.getItem('token') || '';
-        setEmail(logInUser)
+        setEmail(logInUser);
     }
 
-    console.log(email);
 
     async function fetchData(){
 
@@ -56,6 +61,7 @@ const UserProvider = ({ children }) => {
                         ...adminData
                     })
                 });
+                setDesignation(adminEmployeesArray.find(emp=>emp.email.toLowerCase().trim()===email.toLowerCase().trim())?.Designation || '');
                 setUsers(adminEmployeesArray);
             }
             else{
@@ -77,6 +83,9 @@ const UserProvider = ({ children }) => {
         }
     }
 
+    function addDesinationToEMS(designation){
+        setDesignation(designation);
+    }
     async function addUsers(user){
 
         let employee = {
@@ -116,6 +125,7 @@ const UserProvider = ({ children }) => {
             await axios.delete(
                 `https://employee-management-syst-2f45a-default-rtdb.firebaseio.com/employees/${id2}.json`
             );
+            fetchData();
 
         } catch (error) {
             console.log(error);
@@ -143,6 +153,34 @@ const UserProvider = ({ children }) => {
         }
     }
 
+    async function applyLeave(leaveData){
+        try{
+            await axios.post(`https://employee-management-syst-2f45a-default-rtdb.firebaseio.com/leaves.json`,leaveData);
+        }
+        catch(error){
+            console.log(error);
+        }
+    }
+
+    async function getLeaveData(){
+        try{
+            const res = await axios.get(`https://employee-management-syst-2f45a-default-rtdb.firebaseio.com/leaves.json`);
+            const data = res.data || [];
+            const leaveDataArray = Object.keys(data)?.map(key => {
+                const leaveData = data[key];
+                return ({
+                    id: key,
+                    ...leaveData
+                })
+            });
+            return leaveDataArray;
+        }
+        catch(error){
+            console.log(error);
+        }
+
+    }
+
     const value = {
         users:users,
         usersOnLeave:usersOnLeave,
@@ -152,13 +190,17 @@ const UserProvider = ({ children }) => {
         user:user,
         email:email,
         image:image,
+        designation:designation,
         fetchData:fetchData,
         addUsers:addUsers,
         editUsers:editUsers,
         deleteUserData:deleteUserData,
         getEmail:getEmail,
         adminGetData:adminGetData,
-        addAdminName:addAdminName
+        addAdminName:addAdminName,
+        applyLeave:applyLeave,
+        getLeaveData:getLeaveData,
+        addDesinationToEMS:addDesinationToEMS,
     }
     
     return <UserContext.Provider value={value}>

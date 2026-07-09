@@ -61,8 +61,8 @@ export default function Login() {
 
         let count = 0;
 
-        console.log(passwordMessage)
-        console.log(emailMessage)
+
+        
 
         if (!passwordMessage && !emailMessage) {
             users.forEach((user) => {

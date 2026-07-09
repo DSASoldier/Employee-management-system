@@ -23,7 +23,7 @@
 
 .nav-main-container {
   /* width: 80%; */
-  overflow: hidden;
+  overflow: scroll;
 }
 
 .side-bar-component {
@@ -425,4 +425,99 @@ textarea {
 
 .reject-button:hover {
   background: #b71c1c;
+}
+
+/* ================= Notification ================= */
+
+.notification-container{
+  width: 85%;
+  margin: 30px auto;
+}
+
+.notification-title{
+  font-size: 30px;
+  margin-bottom: 25px;
+  color: #2c3e50;
+}
+
+.notification-card{
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0px 4px 15px rgba(0,0,0,0.12);
+  border-left: 6px solid #1976d2;
+  transition: 0.3s;
+}
+
+.notification-card:hover{
+  transform: translateY(-3px);
+  box-shadow: 0px 8px 22px rgba(0,0,0,0.18);
+}
+
+.notification-header{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 15px;
+}
+
+.notification-icon{
+  font-size: 28px;
+}
+
+.notification-heading{
+  margin: 0;
+  color: #1976d2;
+}
+
+.notification-message{
+  font-size: 17px;
+  line-height: 28px;
+  color: #444;
+}
+
+.status-approved{
+  color: green;
+  font-weight: bold;
+}
+
+.status-rejected{
+  color: red;
+  font-weight: bold;
+}
+
+.notification-comment{
+  margin-top: 18px;
+  background: #f7f8fa;
+  border-radius: 8px;
+  padding: 15px;
+}
+
+.notification-comment strong{
+  color: #333;
+}
+
+.notification-comment p{
+  margin-top: 8px;
+  color: #555;
+  line-height: 24px;
+}
+
+.notification-empty{
+  text-align: center;
+  color: #888;
+  font-size: 18px;
+  margin-top: 60px;
+}
+
+.edit-icon{
+  cursor: pointer;
+  font-size: 18px;
+  margin-left: 10px;
+  color: #1976d2;
+}
+
+.editing{
+  border: 2px solid #1976d2;
 }

@@ -10,7 +10,7 @@ import Profile from '../pages/Profile';
 import ManageEmployeeProfile from '../HR/ManageEmployeeProfile';
 import LeaveApply from '../employee/LeaveApply';
 import LeaveAproval from '../HR/LeaveAproval';
-
+import Notification from '../employee/Notification';
 export default function RootRoute(){
 
     return  <Routes>
@@ -31,7 +31,7 @@ export default function RootRoute(){
                         {/* <Route path="user-profile-detail" element={<ManageEmployeeProfile/>}/> */}
                         <Route path='apply-leave' element={<LeaveApply/>}/>
                         <Route path='leave-approve' element={<LeaveAproval/>}/>
-                        
+                        <Route path='notifications' element={<Notification/>}/>
                     </Route>
 
                     <Route path='/profile' element={<Profile/>}/>

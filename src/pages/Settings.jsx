@@ -19,6 +19,8 @@ export default function Settings(){
 
     const employees = context.users || [];
 
+    const [profileImage, setProfileImage] = React.useState(null);
+
     const handleClickOpen = (index) => {
 
         console.log(employees[index]);
@@ -37,23 +39,34 @@ export default function Settings(){
        
         console.log(formJson);
         formJson.id2 = employees[index].id2;
-        formJson.status = status1
+        formJson.status = status1;
+        formJson.image = profileImage;
         editUsers(formJson,index);
 
         handleClose();
     };
 
+    function uploadProfileImage(file) {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      console.log(reader.result);
+      setProfileImage(reader.result);
+    }
+
+    reader.readAsDataURL(file);
+  }
+
     return <div>
-        <AddEmployeeModal handleClickOpen={handleClickOpen} handleClose={handleClose} open={open} handleSubmit={handleSubmit} name={employees[index]?.name} id={employees[index]?.id} role={employees[index]?.role} email={employees[index]?.email} status={employees[index]?.status} date={employees[index]?.joiningDate || employees[index]?.date} status1={status1} setStatus1={setStatus1}/>
+        <AddEmployeeModal handleClickOpen={handleClickOpen} uploadProfileImage={uploadProfileImage} handleClose={handleClose} open={open} handleSubmit={handleSubmit} name={employees[index]?.Name} id={employees[index]?.EmployeeId} role={employees[index]?.Designation} email={employees[index]?.email} status={employees[index]?.status} date={employees[index]?.joiningDate || employees[index]?.date} status1={status1} setStatus1={setStatus1}/>
 
         <div className="setting-root">
 
             {employees.map((employee,index)=>{
                 return <div>
                     <div className="single-employee-data">
-                        <p style={{color:'white',width:'15%',textAlign:'center'}}>{employee?.name || ''}</p>
-                        <p style={{color:'white',width:'15%',textAlign:'center'}}>{employee?.id || ''}</p>
-                        <p style={{color:'white',width:'15%',textAlign:'center'}}>{employee?.role || ''}</p>
+                        <p style={{color:'white',width:'15%',textAlign:'center'}}>{employee?.Name || ''}</p>
+                        <p style={{color:'white',width:'15%',textAlign:'center'}}>{employee?.EmployementId || ''}</p>
+                        <p style={{color:'white',width:'15%',textAlign:'center'}}>{employee?.Designation || ''}</p>
                         <p style={{color:'white',width:'15%',textAlign:'center'}}>{employee?.email || ''}</p>
                         <p style={{color:'white',width:'15%',textAlign:'center'}}>{employee?.status || ''}</p>
                         <p style={{color:'white',width:'15%',textAlign:'center'}}>{employee?.joiningDate || employee?.date}</p>
