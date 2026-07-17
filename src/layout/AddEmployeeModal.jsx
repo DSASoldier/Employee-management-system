@@ -8,16 +8,16 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import RoleDropDown from '../component/RoleDropDown';
 
-export default function AddEmployeeModal({handleClose,open,handleSubmit,name,id,role,email,status,date,status1,setStatus1}){
+export default function AddEmployeeModal({ handleClose, open, handleSubmit,uploadProfileImage, name, id, role, email, status, date, status1, setStatus1 }) {
 
-  const [name1,setName1] = React.useState(name || '')
-  const [id1,setId1] = React.useState(id || '')
-  const [role1,setRole1] = React.useState(role || '')
-  const [email1,setEmail1] = React.useState(email || '')
-  
-  const [date1,setDate1] = React.useState(date || '')
-  
-  React.useEffect(()=>{
+  const [name1, setName1] = React.useState(name || '');
+  const [id1, setId1] = React.useState(id || '');
+  const [role1, setRole1] = React.useState(role || '');
+  const [email1, setEmail1] = React.useState(email || '');
+  const [date1, setDate1] = React.useState(date || '');
+ 
+
+  React.useEffect(() => {
 
     setName1(name);
     setId1(id);
@@ -26,8 +26,10 @@ export default function AddEmployeeModal({handleClose,open,handleSubmit,name,id,
     setStatus1(status);
     setDate1(date);
 
-  },[name,id,role,email,status,date])
+  }, [name, id, role, email, status, date])
+
   
+
   return (
     <React.Fragment>
       <Dialog open={open} onClose={handleClose}>
@@ -43,8 +45,8 @@ export default function AddEmployeeModal({handleClose,open,handleSubmit,name,id,
               required
               margin="dense"
               id="name"
-              name="name"
-              label="name"
+              name="Name"
+              label="Name"
               type="name"
               fullWidth
               variant="standard"
@@ -56,8 +58,8 @@ export default function AddEmployeeModal({handleClose,open,handleSubmit,name,id,
               required
               margin="dense"
               id="id"
-              name='id'
-              label="enrollment number"
+              name='EmployeeId'
+              label="Employee Id"
               type="id"
               fullWidth
               variant="standard"
@@ -69,8 +71,8 @@ export default function AddEmployeeModal({handleClose,open,handleSubmit,name,id,
               required
               margin="dense"
               id="role"
-              name="role"
-              label="role"
+              name="Designation"
+              label="Designation"
               type="role"
               fullWidth
               variant="standard"
@@ -83,7 +85,7 @@ export default function AddEmployeeModal({handleClose,open,handleSubmit,name,id,
               margin="dense"
               id="email"
               name="email"
-              label="email"
+              label="Email"
               type="email"
               fullWidth
               variant="standard"
@@ -104,7 +106,7 @@ export default function AddEmployeeModal({handleClose,open,handleSubmit,name,id,
               onChange={(e) => setStatus1(e.target.value)}
             /> */}
 
-            <RoleDropDown status={status1} setStatus={setStatus1}/>
+            <RoleDropDown status={status1} setStatus={setStatus1} />
 
             <TextField
               autoFocus
@@ -118,7 +120,14 @@ export default function AddEmployeeModal({handleClose,open,handleSubmit,name,id,
               value={date1}
               onChange={(e) => setDate1(e.target.value)}
             />
-            
+            <p>Choose profile image</p>
+            <input 
+              type="file" 
+              accept="image/*" 
+              name="image" 
+              onChange={(e) => uploadProfileImage(e.target.files[0])} 
+            />
+
           </form>
         </DialogContent>
         <DialogActions>

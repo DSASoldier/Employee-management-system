@@ -1,208 +1,386 @@
-import { useState,useRef, useEffect } from "react"
-import { useContext } from "react";
+import { useState,useRef,useEffect,useContext } from "react";
 import { UserContext } from "../context/context";
-import TextField from '@mui/material/TextField';
 import axios from "axios";
 import EmployeeDetail from "../component/EmployeeDetail";
-export default function Profile() {
-
-    const data = useContext(UserContext);
-    const fileInputRef = useRef(null);
-    const [preview, setPreview] = useState(null);
-    const users = data.users;
-    const email = data.email
-    const [firstName,setFirstname] = useState('');
-    const [lastname,setLastname] = useState('');
-    const [gender,setGender] = useState('');
-    const [age,setAge] = useState('');
-    const [base64store,setBase64Store] = useState();
-    const editUser = data.editUsers;
-
-    useEffect(()=>{
-        fetchData();
-    },[email])
-
-    async function fetchData(){
-        
-        try{
-
-            const apiData = await axios.get('https://employee-management-syst-2f45a-default-rtdb.firebaseio.com/dataAddbyEmployee.json');
-
-            const employeeData = apiData.data;
-
-            console.log(employeeData)
-            Object.keys(employeeData).forEach((key)=>{
-                console.log(email?.toLowerCase()?.trim());
-                if(employeeData[key].email?.toLowerCase().trim() === email?.toLowerCase()?.trim()){
-                    
-                    setFirstname(employeeData[key]?.firstName);
-                    setLastname(employeeData[key]?.lastName);
-                    setAge(employeeData[key]?.age);
-                    setGender(employeeData[key]?.gender);
-                    setPreview(employeeData[key]?.image);
-                }
-            })
-
-        }
-        catch(error){
-            console.log(error)
-        }
-
-    }
-
-    async function updateEmployeeData(data,id){
-
-        try{
-
-            await axios.patch(`https://employee-management-syst-2f45a-default-rtdb.firebaseio.com/dataAddbyEmployee/${id}.json`,data);
-        }
-        catch(error){
-            console.log(error);
-        }
-    }
-
-    async function addNewEmployee(data){
-
-        try{
-            await axios.post(`https://employee-management-syst-2f45a-default-rtdb.firebaseio.com/dataAddbyEmployee.json`,data);            
-        }
-        catch(error){
-            console.log(error);
-        }
-
-    }
-
-    async function dataAddbyEmployee(data){
-
-        try{
-
-            const apiData = await axios.get('https://employee-management-syst-2f45a-default-rtdb.firebaseio.com/dataAddbyEmployee.json');
-
-            let count = 0;
-            const employeeData = apiData.data;
-            
-            Object.keys(employeeData || {}).forEach((key)=>{
-                if(employeeData[key]?.email?.toLowerCase().trim() === email?.toLowerCase()?.trim()){
-                    updateEmployeeData(data,key);
-                    count++;
-                }
-            })
-
-            if(count===0){
-                addNewEmployee(data);
-            }
-
-        }
-        catch(error){
-            console.log(error)
-        }
-
-    }
-
-    const handleIconClick = () => {
-        fileInputRef.current.click();
-    };
-
-    const handleFileChange = (e) => {
-
-        const file = e.target.files[0];
-
-        const reader = new FileReader();
-
-        reader.onloadend = () => {
-            const base64 = reader.result;
-
-           users.forEach((data)=>{
-
-            const employee = data;
-            
-            if(employee?.email?.toLowerCase()?.trim()===email?.toLowerCase()?.trim()){
-
-                employee.image = base64;
-                editUser(employee,0);
-                setBase64Store(base64)
-                
-            }
-        })
-        };
-
-        reader.readAsDataURL(file);
-
-        if (file) {
-            const imageUrl = URL.createObjectURL(file);
-            setPreview(imageUrl);
-        }
-    };
-
-    function addEmployeeDataHandler(){
-
-        if(firstName && lastname && age && gender && preview){
-
-            console.log(firstName,lastname,age,gender,preview);
-
-            dataAddbyEmployee({
-                firstName:firstName,
-                lastName:lastname,
-                age:age,
-                gender:gender,
-                email:email,
-                image:base64store
-            })
-        }
-    }
-
-    return <div className="profileContainer">
-
-        <div style={{ display:'flex',textAlign: "center",justifyContent:'center',alignItems:'center',height:'50vh'}}>
-
-            <div
-                // onClick={handleIconClick}
-                style={{
-                    width: "180px",
-                    height: "180px",
-                    borderRadius: "50%",
-                    background: "#eee",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    cursor: "pointer",
-                    overflow: "hidden"
-                }}
-                
-            >
-                
-                {preview ? (
-                    <img src={preview} alt="profile" style={{ width: "100%" }} />
-                ) : (
-                    <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="60"
-                    height="60"
-                    fill="#777"
-                    viewBox="0 0 24 24"
-                    >
-                        <path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 
-                            2.3-5 5 2.3 5 5 5zm0 2c-4.4 0-8 
-                            2.2-8 5v3h16v-3c0-2.8-3.6-5-8-5z"/>
-                    </svg>
-                )}
-            </div>
-
-            {/* Hidden File Input */}
-            {/* <input
-                type="file"
-                accept="image/*"
-                ref={fileInputRef}
-                onChange={handleFileChange}
-                style={{ display: "none" }}
-            /> */}
-
-        </div>
-        <div className="employee-profile-details">
-            <EmployeeDetail heading={'Personal Info'} details={['Email','Phone number','Address','Emergency contact']} detailsInfo={[[`${email}`,'none','none','none']]}></EmployeeDetail>
-            <EmployeeDetail heading={'Job Information'} details={['Employee Id','Department','Designation','Emergency contact']} detailsInfo={[`none`,'none','none','none']}></EmployeeDetail>
-        </div>
+import { url } from "../url/url";
 
 
-    </div>
+export default function Profile(){
+
+
+const context = useContext(UserContext);
+
+
+const email = context.email;
+
+
+const fileInputRef = useRef(null);
+
+
+const [preview,setPreview]=useState(null);
+
+
+const [phoneNumber,setPhoneNumber]=useState("");
+
+const [address,setAddress]=useState("");
+
+const [emergencyNumber,setEmergencyNumber]=useState("");
+
+
+const [employeeID,setEmployeeID]=useState("");
+
+const [department,setDepartment]=useState("");
+
+const [designation,setDesignation]=useState("");
+
+
+
+const [editButtonClicked,setEditButtonClicked]=useState(false);
+
+
+
+
+
+useEffect(()=>{
+
+fetchData();
+
+},[email]);
+
+
+
+
+
+
+
+async function fetchData(){
+
+
+try{
+
+
+const employeeData =
+await axios.get(`${url}/employees.json`);
+
+
+
+const employeeDetails =
+employeeData.data;
+
+
+
+Object.keys(employeeDetails || {})
+.forEach(key=>{
+
+
+const employee =
+employeeDetails[key];
+
+
+
+if(
+employee.email?.toLowerCase().trim()
+===
+email?.toLowerCase().trim()
+){
+
+
+setEmployeeID(employee.EmployeeId);
+
+setDepartment(employee.Department || "");
+
+setDesignation(employee.Designation);
+
+setPreview(employee.image);
+
+
+}
+
+
+
+});
+
+
+
+
+const personalData =
+await axios.get(
+`${url}/dataAddbyEmployee.json`
+);
+
+
+
+Object.keys(personalData.data || {})
+.forEach(key=>{
+
+
+const employee =
+personalData.data[key];
+
+
+
+if(
+employee.email?.toLowerCase().trim()
+===
+email?.toLowerCase().trim()
+){
+
+
+setPhoneNumber(employee.phonenumber);
+
+setAddress(employee.address);
+
+setEmergencyNumber(employee.emergencycontact);
+
+
+}
+
+
+
+});
+
+
+
+}
+catch(error){
+
+console.log(error);
+
+}
+
+
+}
+
+
+
+
+
+
+
+async function saveEmployeeData(data){
+
+
+
+try{
+
+
+const response =
+await axios.get(
+`${url}/dataAddbyEmployee.json`
+);
+
+
+
+let updated=false;
+
+
+
+Object.keys(response.data || {})
+.forEach(key=>{
+
+
+if(
+response.data[key].email
+?.toLowerCase()
+.trim()
+===
+email.toLowerCase().trim()
+
+){
+
+
+axios.patch(
+`${url}/dataAddbyEmployee/${key}.json`,
+data
+);
+
+
+updated=true;
+
+
+}
+
+
+});
+
+
+
+
+if(!updated){
+
+
+axios.post(
+`${url}/dataAddbyEmployee.json`,
+data
+);
+
+
+}
+
+
+
+}
+catch(error){
+
+console.log(error);
+
+}
+
+
+
+}
+
+
+
+
+
+
+
+
+return (
+
+<div className="profile-page">
+
+
+
+
+
+<div className="profile-card">
+
+
+<div className="profile-image-container">
+
+
+{
+preview ?
+
+<img
+src={preview}
+className="large-profile-image"
+/>
+
+
+:
+
+<div className="profile-placeholder">
+
+👤
+
+</div>
+
+}
+
+
+
+</div>
+
+
+
+<h2>
+
+{email}
+
+</h2>
+
+
+
+</div>
+
+
+
+
+
+
+
+
+<div className="profile-details-container">
+
+
+
+
+
+<EmployeeDetail
+
+
+heading="Personal Information"
+
+
+details={[
+"Email",
+"Phone number",
+"Address",
+"Emergency contact"
+]}
+
+
+detailsInfo={[
+email,
+phoneNumber,
+address,
+emergencyNumber
+]}
+
+
+edited={editButtonClicked}
+
+
+handleEditClick={()=>
+setEditButtonClicked(true)
+}
+
+
+handleSaveClick={(data)=>{
+
+saveEmployeeData(data);
+
+setEditButtonClicked(false);
+
+}}
+
+
+/>
+
+
+
+
+
+
+
+<EmployeeDetail
+
+
+heading="Job Information"
+
+
+details={[
+"Employee Id",
+"Department",
+"Designation"
+]}
+
+
+detailsInfo={[
+employeeID,
+department,
+designation
+]}
+
+
+
+/>
+
+
+
+</div>
+
+
+
+
+
+</div>
+
+)
+
+
+
 }

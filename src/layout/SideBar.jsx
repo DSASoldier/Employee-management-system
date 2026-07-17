@@ -1,25 +1,172 @@
-import { Link } from "react-router-dom"
+import { NavLink } from "react-router-dom";
+import { useContext } from "react";
+import { UserContext } from "../context/context";
+
+import {
+    FaHome,
+    FaUsers,
+    FaCog,
+    FaCalendarAlt,
+    FaCheckCircle
+} from "react-icons/fa";
+
+
 export default function SideBar(){
 
-    return <div className="dashboard-side-bar">
 
-            <div className="side-bar-component">
-                <Link to={'/login-dashboard/dashboard'} className="sidebar-list-item">DashBoard</Link>
-            </div>
+    const context = useContext(UserContext);
 
-            <div className="side-bar-component">
-                <Link to={'/login-dashboard/employee'} className="sidebar-list-item">Employee</Link>
-            </div>
 
-            <div className="side-bar-component">
-                <Link to={'/login-dashboard/settings'} className="sidebar-list-item">Setting</Link>
-            </div>
+    const designation = 
+        context.designation?.toLowerCase().trim();
 
-            {/* <div className="side-bar-component">
-                <Link to={'/login-dashboard/user-profile-detail'} className="sidebar-list-item">User profile</Link>
-            </div> */}
-            <div className="side-bar-component">
-                <Link to={'/login-dashboard/leave-approve'} className="sidebar-list-item">Approve leave made by employees</Link>
-            </div>
-    </div>
+
+
+    const menuItems = [
+
+        {
+            name:"Dashboard",
+            path:"/login-dashboard/dashboard",
+            icon:<FaHome/>
+        },
+
+
+        {
+            name:"Employee",
+            path:"/login-dashboard/employee",
+            icon:<FaUsers/>
+        },
+
+
+        {
+            name:"Apply Leave",
+            path:"/login-dashboard/apply-leave",
+            icon:<FaCalendarAlt/>
+        }
+
+    ];
+
+
+
+    return (
+
+        <aside className="dashboard-side-bar">
+
+
+            {
+                menuItems.map((item,index)=>(
+
+                    <NavLink
+
+                        key={index}
+
+                        to={item.path}
+
+                        className={({isActive})=>
+
+                            isActive 
+                            ? 
+                            "sidebar-link active-sidebar"
+                            :
+                            "sidebar-link"
+
+                        }
+
+                    >
+
+                        <span className="sidebar-icon">
+
+                            {item.icon}
+
+                        </span>
+
+
+                        {item.name}
+
+
+                    </NavLink>
+
+                ))
+            }
+
+
+
+
+
+            {
+                designation === "manager" &&
+
+                <NavLink
+
+                    to="/login-dashboard/settings"
+
+                    className={({isActive})=>
+
+                        isActive
+                        ?
+                        "sidebar-link active-sidebar"
+                        :
+                        "sidebar-link"
+
+                    }
+
+                >
+
+                    <span className="sidebar-icon">
+
+                        <FaCog/>
+
+                    </span>
+
+
+                    Settings
+
+
+                </NavLink>
+
+            }
+
+
+
+
+
+            {
+                designation === "hr" &&
+
+                <NavLink
+
+                    to="/login-dashboard/leave-approve"
+
+                    className={({isActive})=>
+
+                        isActive
+                        ?
+                        "sidebar-link active-sidebar"
+                        :
+                        "sidebar-link"
+
+                    }
+
+                >
+
+                    <span className="sidebar-icon">
+
+                        <FaCheckCircle/>
+
+                    </span>
+
+
+                    Approve Leave
+
+
+                </NavLink>
+
+            }
+
+
+
+        </aside>
+
+    );
+
 }

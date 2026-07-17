@@ -1,0 +1,1 @@
+export const url = "https://employee-management-syst-2f45a-default-rtdb.firebaseio.com";

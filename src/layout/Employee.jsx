@@ -1,159 +1,718 @@
-
 import AddEmployeeModal from "./AddEmployeeModal";
-import * as React from 'react';
-import { useState } from "react";
-import { useContext } from "react";
+
+import React, {
+    useState,
+    useContext,
+    useMemo
+} from "react";
+
+import {
+    Pagination,
+    Box
+} from "@mui/material";
+
 import { UserContext } from "../context/context";
-import { employees } from "../constant";
-import { Pagination,Box } from "@mui/material";
+
 
 export default function Employee(){
 
-    const [page, setPage] = useState(1);
-
-    const [open, setOpen] = React.useState(false);
 
     const context = useContext(UserContext);
 
-    const [employeeSearch,setEmployeeSearch] = React.useState('');
 
-    const [employeeRole,setEmployeeRole] = React.useState('All');
+    const users = context.users || [];
 
-    const [employeeStatus,setEmployeeStatus] = React.useState('All');
+    const addUsers = context.addUsers;
 
-    const [status1,setStatus1] = React.useState('active');
+
+    const designation = context.designation || "";
+
+
+
+    const [page,setPage] = useState(1);
+
+    const [open,setOpen] = useState(false);
+
+
+    const [employeeSearch,setEmployeeSearch] = useState("");
+
+    const [employeeRole,setEmployeeRole] = useState("All");
+
+    const [employeeStatus,setEmployeeStatus] = useState("All");
+
+
+    const [status1,setStatus1] = useState("active");
+
+
+    const [profileImage,setProfileImage] = useState(null);
+
 
 
     const itemsPerPage = 10;
 
-    
-    const addUsers = context.addUsers;
-    const users = context.users;
+
 
     const handleClickOpen = () => {
+
         setOpen(true);
-    };
 
- 
+    }
+
+
+
     const handleClose = () => {
-        setOpen(false);
-    };
 
-    const handleChange = (event, value) => {
+        setOpen(false);
+
+    }
+
+
+
+    const handleChange = (event,value) => {
 
         setPage(value);
-    };
+
+    }
+
+
+
+
 
     const handleSubmit = (event) => {
+
+
         event.preventDefault();
+
+
         const formData = new FormData(event.currentTarget);
-        const formJson = Object.fromEntries((formData).entries());
-        
+
+
+        const formJson = Object.fromEntries(
+            formData.entries()
+        );
+
+
 
         formJson.status = status1;
 
+        formJson.image = profileImage;
+
+
+
         addUsers(formJson);
 
+
         handleClose();
-    };
-    
-    return <div>
-        <AddEmployeeModal handleClickOpen={handleClickOpen} handleClose={handleClose} open={open} handleSubmit={handleSubmit} status1={status1} setStatus1={setStatus1}/>
-        <div className="employee-filter-container">
-            <input type="text" placeholder="search" onChange={(e)=>setEmployeeSearch(e.target.value)}className="dashboard-search"/>
 
-            <div className="employee-selectors">
-                <select onChange={(e)=>setEmployeeRole(e.target.value)}>
-                    <option className="selectors">All</option>
-                    <option className="selectors">manager</option>
-                    <option className="selectors">accountant</option>
-                    <option className="selectors">Salesman</option>
-                </select>
-                <select onChange={(e)=>setEmployeeStatus(e.target.value)}>
-                    <option className="selectors">All</option>
-                    <option className="selectors">Active</option>
-                    <option className="selectors">Inactive</option>
-                    <option className="selectors">On Leave</option>
-                </select>
-            </div>
-        </div>
 
-       <div className="employee-add-container">
-            <p className="add-employee-text">Add employees</p>
-            <button onClick={handleClickOpen} className="employee-add-button">Add +</button>
-       </div>
+    }
 
-        <div className="employees-detail-container">
-            {users.slice((page-1)*itemsPerPage,(page-1)*itemsPerPage+itemsPerPage).map((employeeData)=>{
 
-                if(
-                    (employeeData.email.toLowerCase().includes(employeeSearch.toLowerCase().trim()) || employeeData.name.toLowerCase().includes(employeeSearch.toLowerCase().trim()) || employeeSearch==='') && 
-                    (employeeData.role.toLowerCase().trim()===(employeeRole.toLowerCase().trim()) || employeeRole.toLowerCase().trim()==='all') && 
-                    (employeeData.status.toLowerCase().trim()===(employeeStatus.toLowerCase().trim()) || employeeStatus.toLowerCase().trim()==='all')
-                )
-                    {
 
-                return <div className="single-employee-data">
-                        <div style={{width:'5%'}}>
-                            {employeeData.image ? <div
-                                    style={{
-                                        width: "35px",
-                                        height: "35px",
-                                        borderRadius: "50%",
-                                        background: "#eee",
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                        cursor: "pointer",
-                                        overflow: "hidden",
-                                        marginTop:'8px'
-                                    }}
-                                > <img src={employeeData.image} className='profile-image'/> 
-                                </div>: <div style={{
-                                        width: "35px",
-                                        height: "35px",
-                                        borderRadius: "50%",
-                                        background: "#eee",
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                        cursor: "pointer",
-                                        overflow: "hidden",
-                                        marginTop:'8px'
-                                    }}
-                                >
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        width="30"
-                                        height="30"
-                                        fill="#777"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 
-                                            2.3-5 5 2.3 5 5 5zm0 2c-4.4 0-8 
-                                            2.2-8 5v3h16v-3c0-2.8-3.6-5-8-5z"/>
-                                    </svg>
-                                </div>}
-                        </div>
-                    
-                    <p style={{color:'white',width:'15%',textAlign:'center'}}>{employeeData.name}</p>
-                    <p style={{color:'white',width:'20%',textAlign:'center'}}>{employeeData.id}</p>
-                    <p style={{color:'white',width:'20%',textAlign:'center'}}>{employeeData.role}</p>
-                    <p style={{color:'white',width:'20%',textAlign:'center'}}>{employeeData.email}</p>
-                    <p style={{color:'white',width:'10%',textAlign:'center'}}>{employeeData.status}</p>
-                    <p style={{color:'white',width:'10%',textAlign:'center'}}>{employeeData.joiningDate || employeeData.date}</p>
-                </div>
-                }
 
-            })}
-        </div>
-        <Box sx={{ display: "flex",width:'70%' ,justifyContent: "center",position:'fixed',bottom:20 }}>
-            <Pagination 
-                count={10} 
-                page={page}
-                onChange={handleChange}
-            />
-        </Box>  
+
+
+    const uploadProfileImage = (file) => {
+
+
+        if(!file.type.startsWith("image")){
+
+            alert("Please select image file");
+
+            return;
+
+        }
+
+
+
+        const reader = new FileReader();
+
+
+
+        reader.onloadend = () => {
+
+            setProfileImage(reader.result);
+
+        }
+
+
+
+        reader.readAsDataURL(file);
+
+
+    }
+
+
+
+
+
+
+
+    const filteredEmployees = useMemo(()=>{
+
+
+        return users.filter((employee)=>{
+
+
+            const search = 
+            employeeSearch.toLowerCase().trim();
+
+
+
+
+            const matchesSearch =
+
+            employee.Name?.toLowerCase()
+            .includes(search)
+
+            ||
+
+            employee.email?.toLowerCase()
+            .includes(search)
+
+            ||
+
+            search === "";
+
+
+
+
+
+            const matchesRole =
+
+            employeeRole === "All"
+
+            ||
+
+            employee.Designation
+            ?.toLowerCase()
+            .trim()
+
+            ===
+
+            employeeRole.toLowerCase().trim();
+
+
+
+
+
+
+            const matchesStatus =
+
+            employeeStatus === "All"
+
+            ||
+
+            employee.status
+            ?.toLowerCase()
+            .trim()
+
+            ===
+
+            employeeStatus.toLowerCase().trim();
+
+
+
+
+
+            return (
+                matchesSearch
+                &&
+                matchesRole
+                &&
+                matchesStatus
+            );
+
+
+
+        });
+
+
+
+    },[
+        users,
+        employeeSearch,
+        employeeRole,
+        employeeStatus
+    ]);
+
+
+
+
+
+
+
+    const paginatedEmployees =
+
+    filteredEmployees.slice(
+
+        (page-1)*itemsPerPage,
+
+        page*itemsPerPage
+
+    );
+
+
+
+
+
+
+return (
+
+<div className="employee-page">
+
+
+
+    <AddEmployeeModal
+
+        handleClose={handleClose}
+
+        open={open}
+
+        uploadProfileImage={uploadProfileImage}
+
+        handleSubmit={handleSubmit}
+
+        status1={status1}
+
+        setStatus1={setStatus1}
+
+    />
+
+
+
+
+
+    <div className="employee-header">
+
+
+        <h2>
+            Employees
+        </h2>
+
+
+
+        {
+        designation.toLowerCase().trim()==="manager"
+
+        &&
+
+        <button
+
+        onClick={handleClickOpen}
+
+        className="employee-add-button"
+
+        >
+
+            + Add Employee
+
+        </button>
+
+        }
+
 
     </div>
+
+
+
+
+
+
+
+    <div className="employee-filter-box">
+
+
+
+        <input
+
+        type="text"
+
+        placeholder="Search employee..."
+
+        className="employee-search"
+
+
+        value={employeeSearch}
+
+
+        onChange={(e)=>{
+
+            setEmployeeSearch(e.target.value);
+
+            setPage(1);
+
+        }}
+
+
+        />
+
+
+
+
+
+
+        <select
+
+        value={employeeRole}
+
+        onChange={(e)=>{
+
+            setEmployeeRole(e.target.value);
+
+            setPage(1);
+
+        }}
+
+        >
+
+
+            <option value="All">
+
+                All Role
+
+            </option>
+
+
+            <option value="manager">
+
+                Manager
+
+            </option>
+
+
+            <option value="accountant">
+
+                Accountant
+
+            </option>
+
+
+            <option value="salesman">
+
+                Salesman
+
+            </option>
+
+
+        </select>
+
+
+
+
+
+
+
+
+        <select
+
+
+        value={employeeStatus}
+
+
+        onChange={(e)=>{
+
+
+            setEmployeeStatus(e.target.value);
+
+            setPage(1);
+
+
+        }}
+
+
+        >
+
+
+            <option value="All">
+
+                All Status
+
+            </option>
+
+
+
+            <option value="active">
+
+                Active
+
+            </option>
+
+
+
+            <option value="inactive">
+
+                Inactive
+
+            </option>
+
+
+
+            <option value="leave">
+
+                Leave
+
+            </option>
+
+
+        </select>
+
+
+
+
+
+    </div>
+
+
+
+
+
+
+
+
+    <div className="employee-table">
+
+
+
+        <div className="employee-table-header">
+
+
+            <span>
+                Profile
+            </span>
+
+
+            <span>
+                Name
+            </span>
+
+
+            <span>
+                ID
+            </span>
+
+
+            <span>
+                Role
+            </span>
+
+
+            <span>
+                Email
+            </span>
+
+
+            <span>
+                Status
+            </span>
+
+
+            <span>
+                Joining
+            </span>
+
+
+        </div>
+
+
+
+
+
+
+
+
+        {
+
+        paginatedEmployees.map((employee)=>(
+
+
+
+        <div
+
+        className="employee-row"
+
+        key={employee.id2}
+
+
+        >
+
+
+
+            {
+
+
+            employee.image
+
+
+            ?
+
+            <img
+
+            src={employee.image}
+
+            className="employee-avatar"
+
+            />
+
+
+            :
+
+
+            <div className="empty-avatar">
+
+                👤
+
+            </div>
+
+
+
+            }
+
+
+
+
+
+
+            <span>
+
+                {employee.Name}
+
+            </span>
+
+
+
+
+
+            <span>
+
+                {employee.EmployeeId}
+
+            </span>
+
+
+
+
+
+            <span>
+
+                {employee.Designation}
+
+            </span>
+
+
+
+
+
+            <span>
+
+                {employee.email}
+
+            </span>
+
+
+
+
+
+            <span>
+
+
+                <b
+
+                className={
+
+                    employee.status?.toLowerCase()
+                    ==="active"
+
+                    ?
+
+                    "status-active"
+
+                    :
+
+                    "status-leave"
+
+                }
+
+
+                >
+
+                    {employee.status}
+
+
+                </b>
+
+
+            </span>
+
+
+
+
+
+
+            <span>
+
+                {employee.joiningDate || employee.date}
+
+            </span>
+
+
+
+
+
+        </div>
+
+
+
+        ))
+
+        }
+
+
+
+    </div>
+
+
+
+
+
+
+
+
+    <Box className="employee-pagination">
+
+
+        <Pagination
+
+
+        count={
+
+            Math.ceil(
+                filteredEmployees.length/itemsPerPage
+            )
+
+        }
+
+
+        page={page}
+
+
+        onChange={handleChange}
+
+
+        />
+
+
+
+    </Box>
+
+
+
+
+
+</div>
+
+
+)
+
+
 }

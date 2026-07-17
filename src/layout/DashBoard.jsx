@@ -1,41 +1,180 @@
-import { UserContext } from "../context/context"
-import { useContext, useEffect } from "react"
-export default function DashBoard(){
+import { UserContext } from "../context/context";
+import { useContext, useEffect, useMemo } from "react";
 
-    let active = 0,inactive = 0,onLeave = 0;
+export default function DashBoard() {
 
     const context = useContext(UserContext);
 
     const users = context.users;
-    
-    useEffect(()=>{
+
+
+    useEffect(() => {
         context.fetchData();
-    },[]);
-    
-    users.forEach((user)=>{
+    }, []);
 
-        if(user.status.toLowerCase().trim() === 'active') active++;
-        else if(user.status.toLowerCase().trim() === 'inactive') inactive++;
-        else if(user.status.toLowerCase().trim() === 'leave') onLeave++;
 
-    })
+    const stats = useMemo(() => {
 
-    return <div className="dashboard-root">
+        let active = 0;
+        let inactive = 0;
+        let onLeave = 0;
+        let notice = 0;
+        let resigned = 0;
+        let terminated = 0;
 
-                <h2 style={{color:'white'}}>Total Users {users.length}</h2>
 
-                <div>
-                    <p style={{color:'white'}}>Active Users {active}</p>
+        users.forEach((user) => {
 
-                    <p style={{color:'white'}}>On leave {onLeave}</p>
+            const status = user.status?.toLowerCase().trim();
 
-                    <p style={{color:'white'}}>Notice Period {onLeave}</p>
-                
-                    <p style={{color:'white'}}>Resigned {onLeave}</p>
 
-                    <p style={{color:'white'}}>terminated {onLeave}</p>
-                    
+            if(status === "active"){
+                active++;
+            }
+            else if(status === "inactive"){
+                inactive++;
+            }
+            else if(status === "leave"){
+                onLeave++;
+            }
+            else if(status === "notice"){
+                notice++;
+            }
+            else if(status === "resigned"){
+                resigned++;
+            }
+            else if(status === "terminated"){
+                terminated++;
+            }
+
+        });
+
+
+        return {
+            active,
+            inactive,
+            onLeave,
+            notice,
+            resigned,
+            terminated
+        };
+
+
+    },[users]);
+
+
+
+    return (
+
+        <div className="dashboard-root">
+
+
+            <h1 className="dashboard-title">
+                Employee Dashboard
+            </h1>
+
+
+
+            <div className="dashboard-card-container">
+
+
+                <div className="dashboard-card total-card">
+
+                    <h3>
+                        👥 Total Employees
+                    </h3>
+
+                    <h1>
+                        {users.length}
+                    </h1>
+
                 </div>
-                
+
+
+
+
+                <div className="dashboard-card active-card">
+
+                    <h3>
+                        ✅ Active Employees
+                    </h3>
+
+                    <h1>
+                        {stats.active}
+                    </h1>
+
+                </div>
+
+
+
+
+
+                <div className="dashboard-card leave-card-dashboard">
+
+                    <h3>
+                        🌴 Employees On Leave
+                    </h3>
+
+                    <h1>
+                        {stats.onLeave}
+                    </h1>
+
+                </div>
+
+
+
+
+
+                <div className="dashboard-card notice-card">
+
+                    <h3>
+                        📄 Notice Period
+                    </h3>
+
+                    <h1>
+                        {stats.notice}
+                    </h1>
+
+                </div>
+
+
+
+
+
+                <div className="dashboard-card resigned-card">
+
+                    <h3>
+                        ❌ Resigned
+                    </h3>
+
+                    <h1>
+                        {stats.resigned}
+                    </h1>
+
+                </div>
+
+
+
+
+
+                <div className="dashboard-card terminated-card">
+
+                    <h3>
+                        🚫 Terminated
+                    </h3>
+
+                    <h1>
+                        {stats.terminated}
+                    </h1>
+
+                </div>
+
+
+
             </div>
+
+
+        </div>
+
+    );
 }
